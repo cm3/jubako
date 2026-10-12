@@ -1,0 +1,9 @@
+/build/
+*.iso
+*.img
+*.log
+.env
+.env.*
+*.key
+*.pem
+__pycache__/

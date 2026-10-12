@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<labwc_config>
+  <theme><font place="ActiveWindow"><name>Noto Sans CJK JP</name><size>14</size></font><font place="MenuItem"><name>Noto Sans CJK JP</name><size>14</size></font></theme>
+  <keyboard><default />
+    <keybind key="W-Return"><action name="Execute" command="xfce4-terminal --disable-server --font='Noto Sans Mono CJK JP 16'" /></keybind>
+    <keybind key="W-Escape"><action name="Exit" /></keybind>
+  </keyboard>
+  <mouse><default /></mouse>
+</labwc_config>

@@ -1,0 +1,53 @@
+# OS and Live boot
+linux-image-amd64
+live-boot
+live-config
+live-config-systemd
+user-setup
+systemd-sysv
+udev
+dbus
+libpam-systemd
+sudo
+locales
+zstd
+mokutil
+# Japanese display and GUI input
+console-setup
+keyboard-configuration
+fonts-noto-cjk
+fonts-noto-color-emoji
+fontconfig
+fcitx5
+fcitx5-mozc
+fcitx5-frontend-gtk3
+fcitx5-frontend-qt5
+# Desktop and applications
+labwc
+xwayland
+xfce4-terminal
+firefox-esr
+librsvg2-common
+adwaita-icon-theme
+xdg-utils
+# Network and sound
+network-manager
+wpasupplicant
+rfkill
+iproute2
+ca-certificates
+pipewire
+pipewire-pulse
+wireplumber
+pavucontrol
+# Example firmware selection: Intel PC; adjust for your machine.
+firmware-intel-graphics
+firmware-iwlwifi
+firmware-sof-signed
+# Console recovery: English input only
+kbd
+less
+nano
+fcitx5-config-qt
+nm-connection-editor
+lxpolkit

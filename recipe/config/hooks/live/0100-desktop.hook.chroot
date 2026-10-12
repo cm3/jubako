@@ -1,0 +1,13 @@
+#!/bin/sh
+set -eu
+for locale in en_US.UTF-8 ja_JP.UTF-8; do
+    sed -i "s/^# *$locale UTF-8$/$locale UTF-8/" /etc/locale.gen
+    grep -qx "$locale UTF-8" /etc/locale.gen || printf '%s UTF-8\n' "$locale" >> /etc/locale.gen
+done
+locale-gen
+locale -a | grep -qi '^ja_JP\.utf8$'
+for tool in labwc dbus-run-session fcitx5 xfce4-terminal firefox-esr nmcli; do command -v "$tool"; done
+fc-match 'Noto Sans CJK JP' | grep -q NotoSansCJK
+systemctl enable NetworkManager.service
+# Installed from Debian; no host configuration or credentials are imported.
+echo 'Desktop prerequisites checked. Real boot, GPU, input, Wi-Fi and audio are not tested here.'

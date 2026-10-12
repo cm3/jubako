@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openbox_menu>
+  <menu id="root-menu" label="日本語 Live">
+    <item label="端末"><action name="Execute" command="xfce4-terminal --disable-server --font='Noto Sans Mono CJK JP 16'" /></item>
+    <item label="Firefox"><action name="Execute" command="firefox-esr" /></item>
+    <item label="Wi-Fi設定"><action name="Execute" command="nm-connection-editor" /></item>
+    <item label="音量設定"><action name="Execute" command="pavucontrol" /></item>
+    <item label="日本語入力設定"><action name="Execute" command="fcitx5-configtool" /></item>
+    <separator />
+    <item label="GUIを終了"><action name="Exit" /></item>
+  </menu>
+</openbox_menu>

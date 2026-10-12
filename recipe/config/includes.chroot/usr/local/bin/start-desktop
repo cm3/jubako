@@ -1,0 +1,14 @@
+#!/bin/bash
+set -euo pipefail
+(( EUID != 0 )) || { echo 'Start the desktop as user, without sudo.' >&2; exit 1; }
+[[ $(tty) =~ ^/dev/tty[1-6]$ && -z ${DISPLAY:-}${WAYLAND_DISPLAY:-} ]] || { echo 'Run directly from a Linux console (tty1 through tty6).'; exit 1; }
+[[ -n ${XDG_RUNTIME_DIR:-} && -d $XDG_RUNTIME_DIR && -O $XDG_RUNTIME_DIR ]] || { echo 'No user runtime directory; check the PAM/systemd login session.'; exit 1; }
+export LANG=ja_JP.UTF-8 LC_ALL=ja_JP.UTF-8
+export XKB_DEFAULT_LAYOUT=jp GTK_IM_MODULE=fcitx QT_IM_MODULE=fcitx XMODIFIERS=@im=fcitx
+export XDG_CURRENT_DESKTOP=labwc GDK_BACKEND=wayland MOZ_ENABLE_WAYLAND=1
+mkdir -p "$HOME/.cache/ja-live"
+echo 'Desktop: Win+Enter opens Terminal; right-click opens the menu; Win+Escape exits.'
+rc=0
+dbus-run-session labwc -S /usr/local/bin/desktop-session > "$HOME/.cache/ja-live/desktop.log" 2>&1 || rc=$?
+echo 'Returned to console. Log: ~/.cache/ja-live/desktop.log'
+exit "$rc"

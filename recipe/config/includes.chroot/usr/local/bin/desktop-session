@@ -1,0 +1,20 @@
+#!/bin/bash
+set -euo pipefail
+umask 077
+pids=()
+cleanup() { for pid in "${pids[@]}"; do kill "$pid" 2>/dev/null || true; done; }
+trap cleanup EXIT
+trap 'exit 0' TERM INT HUP
+# im-config is not used: this session explicitly selects one GUI input framework.
+mkdir -p "$HOME/.config/fcitx5"
+if [[ ! -f "$HOME/.config/fcitx5/profile" ]]; then
+    cp /usr/share/ja-live/fcitx5-profile "$HOME/.config/fcitx5/profile"
+fi
+fcitx5 --disable=notificationitem > "$HOME/.cache/ja-live/ime.log" 2>&1 &
+ime=$!; pids+=("$ime")
+lxpolkit > "$HOME/.cache/ja-live/policy.log" 2>&1 &
+pids+=("$!")
+xfce4-terminal --disable-server --font='Noto Sans Mono CJK JP 16' &
+pids+=("$!")
+# The session remains until compositor exit; closing an app never exits the GUI.
+while kill -0 "${LABWC_PID:?}" 2>/dev/null; do sleep 1; done
