@@ -1,8 +1,13 @@
 <!doctype html>
-<html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>公開と確認範囲：最初のコミットからPagesへ</title><link rel="stylesheet" href="style.css"></head><body><main><nav aria-label="ガイド"><a href="index.html">概要</a><a href="getting-started.html">最初の構築</a><a href="customize.html">変更する</a><a href="architecture.html">仕組み</a><a href="publishing.html">公開と確認範囲</a></nav><h1>公開と確認範囲：最初のコミットからPagesへ</h1><h2>このdraftで確認するもの</h2><ul><li>shell構文、XML、パッケージ一覧、説明書のリンク。</li><li>build配下へ独立取得したDebian 13のAPT索引による依存シミュレーション。</li><li>lb configが空の作業先を準備できること。</li></ul><p>フルISOの構築、VM起動、GPU/Wi-Fi/音声、日本語入力、Secure Boot実機起動はこの切り出した版で別途試す必要があります。元プロジェクトの確認済み機能をそのまま保証しません。</p>
-<h2>GitHub Pagesの設定</h2><ol><li>README・recipe・scripts・docsのコミットをGitHubへpushします。</li><li>repoのSettings → Pages → Build and deploymentでDeploy from a branchを選びます。</li><li>ブランチmain、フォルダー/docsを選び保存します。</li><li>公開URLで相対リンクとスマホ表示を確認します。</li></ol><p>docsは静的HTML/CSSで、.nojekyllを置いています。外部ビルドツールや公開用の認証情報を保存しません。公開予定のURLは<a href="https://cm3.github.io/jubako/">https://cm3.github.io/jubako/</a>で、現時点で公開済みという意味ではありません。</p>
-<h2>pushする前</h2><p>git diff --cachedで対象を確認し、build・個人設定・認証・鍵・アプリバイナリ・私的調査記録が入っていないか確認します。このrepoは選んだ新しいソースだけから新規Git履歴を始めます。</p>
-<h2>ライセンス</h2><p>独自の説明・設定・コードはMITです。Debianパッケージの条件は別で、THIRD_PARTY.mdと各パッケージのcopyrightを参照してください。repoはISOを公開しません。自分で作ったISOを配布するなら、同梱パッケージの条件を別途確認します。</p>
-<h2>自動チェック</h2><p>GitHub Actionsはソース検査だけです。rootでLinuxを構築したり、USBへ書いたり、ISOをアップロードしたりしません。Pages公開はGitHub側の/docs設定で行います。</p>
-<h2>利用時の前提</h2><p>自動ログインとLive userのsudoを使う個人作業向けの環境です。複数人で共有するPCのアクセス制御、全機器対応、保存領域の暗号化まで完成した製品ではありません。</p>
-<p><a href="https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site">GitHub公式：公開元の設定</a></p><footer>jubako · Debian Liveの作例 · 初回コミットdraft · 独自ソースはMIT</footer></main></body></html>
+<html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>検証と共有 — 自分のレシピを公開する</title><link rel="stylesheet" href="style.css"></head><body><main><nav aria-label="ガイド"><a href="index.html">作例の概要</a><a href="getting-started.html">構築する</a><a href="customize.html">変更する</a><a href="architecture.html">仕組み</a><a href="publishing.html">検証と共有</a><a href="usage.html">USB版の使い方</a></nav><h1>検証と共有 — 自分のレシピを公開する</h1>
+<h2>この作例の検証状況</h2><p>ソース構文・XML・説明書リンク、Debian 13のAPT索引による依存解決シミュレーション、<code>lb config</code> の設定生成を確認しています。この公開レシピのフルISO構築・VM起動・実機起動は未確認です。ソース検査だけでは対象機器での動作確認を代替できません。</p>
+<h2>自分のPCで確認する</h2><ul><li>ISOが構築でき、チェックサムが一致すること。</li><li>対象UEFIで起動し、Secure Bootの状態を確認できること。</li><li>GPU、画面、キーボード、日本語入力、Wi-Fi、音声が動くこと。</li><li>GUIの開始・終了とCUIへの復帰ができること。</li><li>RAMセッションで保存する作業を別媒体へ残せること。</li></ul><p>使用したcommit、Debian版、PC/VMと結果を記録すると、変更後の差を比較できます。ソース検査だけでは実機の動作確認を代替できません。</p>
+<h2>自分の変更をGitで共有する</h2><p>レシピと説明書をコミットし、生成物と個人データを含めないようにします。リポジトリの <code>check-private.py</code> はGitのステージ対象から典型的な秘密や生成物を探す補助で、内容の最終確認も必要です。</p>
+<pre><code>git add README.md LICENSE THIRD_PARTY.md .gitignore .github docs recipe scripts
+python3 scripts/check-private.py
+git diff --cached --check
+git diff --cached</code></pre><p>ISO・認証・秘密鍵・ログ・個人設定は公開対象から外します。Gitの作者メールも公開されるので、必要ならGitHubのnoreplyアドレスを設定してください。</p>
+<h2>説明書をGitHub Pagesで公開する</h2><p>この説明書は <code>docs/</code> の静的HTML/CSSです。自分のforkで公開する場合は、GitHubのSettings → Pagesで「Deploy from a branch」、ブランチと <code>/docs</code> を選びます。<code>.nojekyll</code> があるため外部のサイト生成ツールは不要です。</p><p>公開後は自分のURLで相対リンクを確認してください。元の説明書は<a href="https://cm3.github.io/jubako/">こちら</a>から読めます。</p>
+<h2>ライセンスと配布範囲</h2><p>独自のコード・設定・説明はMITです。Debianパッケージの条件は別なので <code>THIRD_PARTY.md</code> と各パッケージのcopyrightを参照します。リポジトリにはISOやアプリバイナリを含めません。作成したISOを配布する場合は同梱物のライセンスを確認してください。</p>
+<p>GitHub Actionsはソース検査のみを行います。ISOの自動構築・配布、USB操作は行いません。自動ログインとLiveユーザーのsudo利用を含む作例なので、共有端末のアクセス制御が必要な用途では別途設計してください。</p>
+<footer>jubako · Debian Liveの構築作例 · 独自コードと文書はMIT</footer></main></body></html>

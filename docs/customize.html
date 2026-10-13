@@ -1,8 +1,16 @@
 <!doctype html>
-<html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>変更する：アプリ・キー・見た目</title><link rel="stylesheet" href="style.css"></head><body><main><nav aria-label="ガイド"><a href="index.html">概要</a><a href="getting-started.html">最初の構築</a><a href="customize.html">変更する</a><a href="architecture.html">仕組み</a><a href="publishing.html">公開と確認範囲</a></nav><h1>変更する：アプリ・キー・見た目</h1><h2>編集して、prepareからやり直す</h2><p>生成されたchrootへ手で設定を足すより、recipeを変えることで次も同じ意図で作れます。元のrunは検査記録として残し、新しい作業先で構築します。</p>
-<div class="scroll"><table><thead><tr><th>変更したいもの</th><th>編集箇所</th></tr></thead><tbody><tr><td>アプリ・フォント・firmware</td><td>recipe/config/package-lists/desktop.list.chroot</td></tr><tr><td>Debian版・配列・ホスト名</td><td>recipe/auto/config</td></tr><tr><td>構築中に行う設定と検査</td><td>recipe/config/hooks/live/</td></tr><tr><td>OSへ置く自作ファイル</td><td>recipe/config/includes.chroot/</td></tr><tr><td>labwcのキーと右クリックメニュー</td><td>includes.chroot/etc/xdg/labwc/rc.xml、menu.xml</td></tr><tr><td>起動するアプリと入力方式</td><td>includes.chroot/usr/local/bin/desktop-session</td></tr></tbody></table></div>
-<h2>アプリを追加する</h2><p>まずDebianにあるパッケージ名を確認し、package-listへ追加します。check --dependenciesで依存を見てからprepare/buildします。外部バイナリを使う場合は取得URL・版・ハッシュ・利用条件を別に管理し、個人の実行ファイルや認証をコピーしません。</p>
-<h2>firmwareを変える</h2><p>初期一覧はIntel GPU/Wi-Fi/audioを例示します。自分のPCに必要なfirmwareを調べて変更してください。機種固有の署名moduleやファン操作はこの例へ含めていません。</p>
-<h2>キーとメニューを変える</h2><p>rc.xmlがキーと画面の設定、menu.xmlがアプリの入口です。XMLを編集したらcheckを実行し、起動後に操作を確認します。日本語の変換キーの詳細や画面の倍率は、利用機器に合わせて後から調整します。</p>
-<h2>最初は変えない方がよいもの</h2><p>署名起動、GUIの通常user実行、RAMセッションの境界を維持して、小さい変更から確認すると原因を追いやすくなります。保存・暗号化を追加するときは、アプリ起動前の保存先確定と終了順序までまとめて設計します。</p>
-<details><summary>設定を変えたら必ずISOを作り直す？</summary><p>この初回例は標準のフルISOを作ります。3層高速更新は将来の別作例として検討するため、ここにはまだありません。</p></details><footer>jubako · Debian Liveの作例 · 初回コミットdraft · 独自ソースはMIT</footer></main></body></html>
+<html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>変更する — アプリ・キー・設定</title><link rel="stylesheet" href="style.css"></head><body><main><nav aria-label="ガイド"><a href="index.html">作例の概要</a><a href="getting-started.html">構築する</a><a href="customize.html">変更する</a><a href="architecture.html">仕組み</a><a href="publishing.html">検証と共有</a><a href="usage.html">USB版の使い方</a></nav><h1>変更する — アプリ・キー・設定</h1>
+<p>作りたい環境に合わせて <code>recipe/</code> を編集し、検査、prepare、buildの順に進めます。起動中に手で入れた設定だけでは次のISOへ反映されません。</p>
+<div class="scroll"><table><thead><tr><th>変更するもの</th><th>編集箇所（リポジトリからの相対パス）</th></tr></thead><tbody>
+<tr><td>アプリ・フォント・firmware</td><td><code>recipe/config/package-lists/desktop.list.chroot</code></td></tr>
+<tr><td>Debian版・配列・ホスト名</td><td><code>recipe/auto/config</code></td></tr>
+<tr><td>構築中の設定と検査</td><td><code>recipe/config/hooks/live/</code></td></tr>
+<tr><td>OSへ収録する自作ファイル</td><td><code>recipe/config/includes.chroot/</code></td></tr>
+<tr><td>labwcのキー・右クリックメニュー</td><td><code>recipe/config/includes.chroot/etc/xdg/labwc/rc.xml</code>・<code>menu.xml</code></td></tr>
+<tr><td>セッションで起動するアプリ</td><td><code>recipe/config/includes.chroot/usr/local/bin/desktop-session</code></td></tr>
+</tbody></table></div>
+<h2>パッケージを追加する</h2><p>Debianでのパッケージ名を調べて一覧へ1行ずつ追加し、<code>bash scripts/check.sh --dependencies</code> で依存を確認します。外部バイナリを使う場合は、取得元・版・ハッシュ・ライセンスを記録し、認証や個人設定を収録しない取得手順を用意します。</p>
+<h2>対象PCに合わせる</h2><p>初期一覧はIntel向けのGPU・Wi-Fi・音声firmwareを含みます。AMDなど別の機器で使う場合は必要なfirmwareを追加します。キー・画面倍率・日本語入力の切替は <code>rc.xml</code> と入力設定を対象機器で確認してください。</p>
+<h2>小さい変更から確認する</h2><p>まずアプリやメニューを1つ変更して起動結果を確かめます。署名済み起動経路、通常ユーザーでのGUI実行、RAMセッションを保つと、変更の影響を追いやすくなります。</p>
+<p>永続保存を追加する場合は、保存対象、アプリ起動前の保存先確定、解錠、終了時のアンマウントまで設計します。現在のスクリプトは標準のフルISOを作るため、設定変更後もISOを再構築します。</p>
+<footer>jubako · Debian Liveの構築作例 · 独自コードと文書はMIT</footer></main></body></html>

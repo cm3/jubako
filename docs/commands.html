@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>jubako — コマンド一覧</title>
+<style>body{max-width:1050px;margin:36px auto;padding:0 24px;font:18px/1.7 sans-serif;color:#243246;background:#f5f7fa}a{color:#176099}h1{font-size:32px}h2{margin-top:32px}table{width:100%;border-collapse:collapse;background:white}th,td{text-align:left;padding:12px;border-bottom:1px solid #dde3eb;vertical-align:top}th{background:#e9eff7}td:first-child{white-space:nowrap}h3{margin-top:20px;font-size:19px}code{background:#e9eff7;padding:2px 5px;border-radius:4px}.note{color:#526174}@media(max-width:650px){body{padding:0 14px}th,td{padding:8px;font-size:16px}td:first-child{white-space:normal}}</style></head><body>
+<nav><a href="usage.html">USB版の使い方</a> ／ <a href="index.html">構築作例のトップ</a></nav>
+<h1>コマンド一覧</h1><p class="note">この一覧はjubako USB版の説明です。公開リポジトリの小さな構築作例とは収録範囲が異なります。</p>
+<p>jubako に入っている自前のコマンドです。端末で名前を打って使います。端末では <code>jubako-commands</code> で同じ一覧（英語）を、<code>jubako-util</code> でよく使う操作のメニューを出せます。<code>sudo</code> と書いたものは管理者の権限を使います（保存領域の解錠ではLUKSパスフレーズを入力します）。</p>
+
+<h2>普段使うもの</h2><table><thead><tr><th>コマンド</th><th>できること</th></tr></thead><tbody>
+<tr><td><code>jubako-util</code></td><td>よく使う操作のメニュー。日本語入力の設定、スクロール方向、保存済み Wi-Fi の削除、AI の認証の削除、非常用の書き出し、コマンド一覧。GUI の外（コンソール）では、Wi-Fi の設定や日本語のコンソールなど、コンソール用の項目になる。</td></tr>
+<tr><td><code>jubako-commands</code></td><td>コマンドの一覧を端末に出す（英語。素のコンソールでも読めるように）。</td></tr>
+<tr><td><code>jubako-zed</code></td><td>Zed でプロジェクトを開く。README の冒頭を見ながら選べる画面が出る。新規作成・削除もここから。開いているプロジェクトは重ねて開かず、前面に出す。左のタスクバーの Zed アイコンと同じ。</td></tr>
+<tr><td><code>jubako-terminal</code></td><td>端末を開く（Win+Enter と同じ）。</td></tr>
+<tr><td><code>jubako-power</code></td><td>電源の画面。操作しないとスリープするまでの時間、サスペンド、再起動、シャットダウン。右下の電源アイコンと同じ。</td></tr>
+<tr><td><code>jubako-screenshot region|full</code></td><td>スクリーンショット。範囲（Win+Shift+S）か全画面（Win+S）。クリップボードに入り、exFAT の <code>Screenshots</code> にも保存される。</td></tr>
+<tr><td><code>jubako-scroll</code></td><td>タッチパッドのスクロール方向を切り替える。</td></tr>
+<tr><td><code>jubako-ime-settings</code></td><td>Mozc（日本語変換）の設定画面。辞書、予測候補、キー設定。</td></tr>
+<tr><td><code>jubako-codex start|login|qr|status|run</code></td><td>端末で Codex を使うための補助。<code>qr</code> はログイン用の URL を QR コードで表示する（スマートフォンでログインするとき）。</td></tr>
+<tr><td><code>jubako-wifi-storage save|restore|forget</code></td><td>Wi-Fi の接続情報を ext4 に保存・復元・削除する。接続すると自動で保存されるので、普段は削除のときだけ使う。</td></tr>
+<tr><td><code>jubako-auth-forget</code></td><td>保存してある Codex・Claude の認証情報を削除する（設定と会話の履歴は残る）。</td></tr>
+<tr><td><code>jubako-ram-backup</code></td><td>ext4 が使えず RAM に保存されていたエージェントのデータを、非常用に exFAT の <code>debian-live/recovery/</code> へtarで書き出す。認証情報を含み得る暗号化されていないファイルなので、非公開で保管する。</td></tr>
+</tbody></table>
+
+<h2>デスクトップとコンソール</h2><table><thead><tr><th>コマンド</th><th>できること</th></tr></thead><tbody>
+<tr><td><code>jubako-browser</code></td><td>GUI（labwc と Firefox）を始める。普段は起動時に自動で動く。</td></tr>
+<tr><td><code>jubako-desktop</code></td><td>Linux のコンソールから GUI を始める。</td></tr>
+<tr><td><code>jubako-gui-exit</code></td><td>GUI を終える（Win+Escape、右クリックのメニューと同じ）。終わると自動で日本語のコンソール（<code>jubako-console</code>）が開く。</td></tr>
+<tr><td><code>sudo jubako-console</code></td><td>日本語を表示できるコンソール（kmscon、tty8）。Ctrl+D で元に戻る。日本語の入力はできない。</td></tr>
+<tr><td><code>sudo jubako-wifi</code></td><td>コンソールで Wi-Fi に接続・管理する。</td></tr>
+</tbody></table>
+
+<h2>保存領域</h2><table><thead><tr><th>コマンド</th><th>できること</th></tr></thead><tbody>
+<tr><td><code>sudo jubako-ext4 unlock|mount|status|close</code></td><td>暗号化された ext4（設定・認証・学習の保存先）。<code>unlock</code> はパスフレーズで開く（または RAM だけで使う）、<code>mount</code> はマウントして保存用のフォルダーを準備、<code>status</code> は状態の表示、<code>close</code> は閉じる。普段は GUI を始めるときと起動・終了時に自動で動く。</td></tr>
+<tr><td><code>sudo jubako-exfat mount|status|unmount</code></td><td>exFAT（プロジェクトの置き場所）をマウント・確認・取り外しする。</td></tr>
+</tbody></table>
+
+<h2>診断</h2><table><thead><tr><th>コマンド</th><th>できること</th></tr></thead><tbody>
+<tr><td><code>jubako-diag save</code></td><td>カーネル・システムログ・音声・USB-C などの診断を exFAT の <code>logs</code> に保存する（sudo を使う）。困ったときに、Windows から読める形で持ち帰る。</td></tr>
+<tr><td><code>jubako-diag audio [before|silent|working|after]</code></td><td>音声の診断を保存する。音が出ないときは <code>silent</code>、直った後は <code>working</code> を付けると比べやすい。</td></tr>
+<tr><td><code>jubako-diag usb-c</code></td><td>USB-C の電源管理のドライバーを読み込み直してから、診断を保存する。先に USB-C の機器をすべて外す。</td></tr>
+</tbody></table>
+
+<h2>自動で動くもの</h2><table><thead><tr><th>コマンド</th><th>できること</th></tr></thead><tbody>
+<tr><td><code>jubako-fan</code></td><td>CF-SR4 のファンを静かなモードにする（起動時）。</td></tr>
+<tr><td><code>jubako-pana-mute</code></td><td>Windows で消音したままでも内蔵スピーカーが鳴るよう、起動時に解除し、終了時に元へ戻す。</td></tr>
+<tr><td><code>jubako-wifi-store</code></td><td>Wi-Fi の接続情報の保存・復元（接続時と起動時に自動）。</td></tr>
+<tr><td><code>jubako-input-store</code></td><td>入力の設定の保存・復元。</td></tr>
+</tbody></table>
+
+<h2>内部の部品（/usr/local/libexec）</h2>
+<p class="note">上のコマンドやサービスから呼ばれる部品です。直接は使いません。このイメージに収録した部品を分類しています。</p>
+<h3>GUI のセッション</h3><table><thead><tr><th>部品</th><th>役割</th><th>呼び出し元</th></tr></thead><tbody>
+<tr><td><code>jubako-browser-session</code></td><td>GUI のセッションの本体。waybar・fcitx5・Firefox などを起動し、終了時に止める</td><td>jubako-browser</td></tr>
+<tr><td><code>jubako-panel</code></td><td>waybar を起動し、落ちたら起動し直す（5 回まで）</td><td>jubako-browser-session</td></tr>
+<tr><td><code>jubako-browser-window</code></td><td>Firefox を開く。開いていれば前面に出す。リンクを開くときにも使う</td><td>タスクバー、Zed、メニュー、既定のブラウザー</td></tr>
+<tr><td><code>jubako-console-util</code></td><td><code>jubako-util</code> のコンソール版</td><td>jubako-util</td></tr>
+</tbody></table>
+<h3>Zed</h3><table><thead><tr><th>部品</th><th>役割</th><th>呼び出し元</th></tr></thead><tbody>
+<tr><td><code>jubako-zed-picker</code></td><td>プロジェクト選択画面（README の冒頭、新規作成、削除）</td><td>jubako-zed</td></tr>
+<tr><td><code>jubako-zed-settings</code></td><td>Zed の設定に、イメージが管理する項目（ACP など）だけを書き込む</td><td>jubako-zed</td></tr>
+<tr><td><code>jubako-zed-state</code></td><td>Zed の保存先（ext4）を準備する</td><td>jubako-zed、jubako-zed-uri</td></tr>
+<tr><td><code>jubako-zed-uri</code></td><td><code>zed://</code> のリンクを、今の Zed と同じ保存先で開く</td><td>既定のアプリの設定</td></tr>
+<tr><td><code>jubako-agent-state</code></td><td>Codex・Claude の設定・認証・履歴の保存先（ext4）につなぐ</td><td>jubako-browser-session、jubako-codex、jubako-zed</td></tr>
+<tr><td><code>jubako-login-qr</code></td><td>ログイン用の URL を QR コードで表示する</td><td>jubako-codex（login・qr）</td></tr>
+</tbody></table>
+<h3>保存領域</h3><table><thead><tr><th>部品</th><th>役割</th><th>呼び出し元</th></tr></thead><tbody>
+<tr><td><code>jubako-persist-common</code></td><td>ext4 を扱う共通の処理（Wi-Fi・入力の設定・GUI の保存で共有）</td><td>jubako-persist、jubako-unlock、jubako-wifi-store、jubako-input-store</td></tr>
+<tr><td><code>jubako-unlock</code></td><td>LUKS解錠・RAM選択・終了時のclose</td><td>jubako-ext4、jubako-storage.service</td></tr>
+<tr><td><code>jubako-persist</code></td><td>解錠済みext4のmountと保存用ディレクトリ準備</td><td>jubako-ext4、jubako-unlock、jubako-persist.service</td></tr>
+</tbody></table>
+<h3>診断</h3><table><thead><tr><th>部品</th><th>役割</th><th>呼び出し元</th></tr></thead><tbody>
+<tr><td><code>jubako-gui-snapshot</code></td><td>GUI の状態を、URL や認証を含めずに診断用に書き出す</td><td>jubako-browser、jubako-audio-diagnose</td></tr>
+<tr><td><code>jubako-audio-snapshot</code></td><td>音声の状態を書き出す</td><td>jubako-gui-snapshot</td></tr>
+<tr><td><code>jubako-audio-kernel</code></td><td>音声のカーネル・ハードウェアの情報を読む（設定は変えない）</td><td>jubako-audio-diagnose</td></tr>
+<tr><td><code>jubako-typec-state</code></td><td>USB-C の充電の状態を読む（機器のシリアル番号は読まない）</td><td>jubako-experiment</td></tr>
+<tr><td><code>jubako-gui-diagnostics</code></td><td>root診断とGUI状態をまとめて保存</td><td>jubako-diag save / usb-c</td></tr>
+<tr><td><code>jubako-audio-diagnose</code></td><td>比較ラベル付きの音声診断</td><td>jubako-diag audio</td></tr>
+<tr><td><code>jubako-experiment</code></td><td>非対話のシステム診断をexFATへ保存</td><td>jubako-gui-diagnostics</td></tr>
+<tr><td><code>jubako-ppm</code></td><td>明示確認後にUCSIドライバーを再読み込み</td><td>jubako-diag usb-c</td></tr>
+</tbody></table>
+<p><a href="usage.html">USB版の使い方へ</a></p>
+</body></html>

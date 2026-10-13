@@ -1,14 +1,22 @@
 <!doctype html>
-<html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>最初の構築：レシピからUSB起動まで</title><link rel="stylesheet" href="style.css"></head><body><main><nav aria-label="ガイド"><a href="index.html">概要</a><a href="getting-started.html">最初の構築</a><a href="customize.html">変更する</a><a href="architecture.html">仕組み</a><a href="publishing.html">公開と確認範囲</a></nav><h1>最初の構築：レシピからUSB起動まで</h1><h2>1. ホストを用意する</h2><p>Debian 13のamd64環境を使います。WSL2 Debianを想定しますが、実USBの起動機能はWSLだけでは検証できません。ホストへ構築ツールを導入するsudoと、後のUSBへの書き込みは別の作業です。</p>
-<pre><code>sudo apt update
+<html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>構築する — レシピからISO・USB起動まで</title><link rel="stylesheet" href="style.css"></head><body><main><nav aria-label="ガイド"><a href="index.html">作例の概要</a><a href="getting-started.html">構築する</a><a href="customize.html">変更する</a><a href="architecture.html">仕組み</a><a href="publishing.html">検証と共有</a><a href="usage.html">USB版の使い方</a></nav><h1>構築する — レシピからISO・USB起動まで</h1>
+<p>Debian 13・amd64の構築ホスト、ネットワーク、十分なディスク空き、sudoを使えるアカウントを用意します。WSL2のDebianでも構築設定を準備できます。起動・GPU・キーボードの動作はVMや実機で確認します。</p>
+<h2>1. 構築ツールを入れる</h2><pre><code>sudo apt update
 sudo apt install live-build debootstrap xorriso squashfs-tools \
   dosfstools mtools syslinux-utils zstd python3 git</code></pre>
-<p>数GBのISOだけでなく、展開済みLinuxとキャッシュを作るので十分なディスク空きが必要です。まず20GB以上を目安に空きを確保し、実際の使用量を確認してください。ハードウェアや追加アプリにより変わる目安です。</p>
-<h2>2. 構築ソースを取得する</h2><pre><code>git clone https://github.com/cm3/jubako.git
+<p>sudoはホストへのパッケージ導入と、ビルド時のchroot・一時マウントに使います。USB書き込みは後の別操作です。ISOのほかに展開済みOSとキャッシュを置くため、20GB以上を空き容量の出発点として、実際の使用量を確認してください。追加するアプリによって必要量は増えます。</p>
+<h2>2. ソースと依存を確認する</h2><pre><code>git clone https://github.com/cm3/jubako.git
 cd jubako
 bash scripts/check.sh
-bash scripts/check.sh --dependencies</code></pre><p>通常のcheckはshell・XML・説明書のリンク・設定条件を確認します。dependenciesはDebian 13の対象APT索引をbuild配下へ取得して、パッケージ解決を模擬します。ホストのAPT設定は変更しません。インストールやUSB操作は行いません。初回の索引取得にはネットワークが必要です。</p>
-<h2>3. 新しい作業先を作る</h2><pre><code>bash scripts/prepare.sh</code></pre><p>recipeだけをbuild/runsへコピーし、lb configを実行します。ホームやワークスペース全体はコピーしません。prepareは通常userで行い、構築は次でsudoを使います。</p>
-<h2>4. ビルドする</h2><pre><code>sudo bash scripts/build.sh</code></pre><p>sudoはchroot、ファイル所有権、一時マウントに必要です。成功時にISOの場所が表示されます。ログはrun内のlogs/build.log、チェックサムはSHA256SUMSです。</p><p>失敗したrunへ再びbuildしません。原因をレシピで修正してprepareし、新しいrunでbuildします。この初回作例は古いrunからの高速再利用や自動掃除を実装していません。</p>
-<h2>5. VMまたはUSBで起動する</h2><p>ISOをVMの起動媒体に指定するか、Rufus等で自分のUSBへ書きます。USBを選ぶと既存データが消えるので、容量・モデル・退避を確認してください。repoはUSBを書き換えません。</p><p>署名起動の確認にはUEFI/Secure Boot対応のVMまたは実PCで起動する必要があります。通常BIOSのVMでGUIが出てもSecure Bootの成功にはなりません。Secure BootやBitLockerを無効化する手順は案内しません。</p>
-<h2>6. 起動後に試す</h2><p>GUIは一度自動で開始します。<strong>Win+Enterで端末、デスクトップを右クリックでメニュー、Win+EscapeでGUI終了</strong>です。Firefox、Wi-Fi、日本語入力設定、音量設定はメニューから開きます。</p><p>最初は日本語入力のオン/オフ、変換、端末の貼付、Firefox、Wi-Fi接続を試し、PCと版を記録します。GUIが出ない場合はCUIからstart-desktop、ログは~/.cache/ja-live/desktop.logを確認します。</p><p class="note">この例はRAMセッションです。アプリ設定・Wi-Fi・認証を再起動後へ残しません。残したい作業は別媒体へ明示保存してください。</p><footer>jubako · Debian Liveの作例 · 初回コミットdraft · 独自ソースはMIT</footer></main></body></html>
+bash scripts/check.sh --dependencies</code></pre>
+<p>通常の検査はshell・XML・説明書のリンク・構成条件を確認します。依存検査はDebianの対象APT索引を <code>build/</code> へ取得して解決を模擬します。ホストのAPT設定を変更せず、パッケージ導入やUSB操作も行いません。</p>
+<h2>3. 新しい作業先を準備して構築する</h2><pre><code>bash scripts/prepare.sh
+sudo bash scripts/build.sh</code></pre>
+<p><code>prepare</code> はレシピを <code>build/runs/</code> の新しいディレクトリへコピーして設定を生成します。<code>build</code> はそこでISOを作ります。成功すると <code>live-image-amd64.hybrid.iso</code> と <code>SHA256SUMS</code> の場所が表示されます。ログは同じrunの <code>logs/build.log</code> です。</p>
+<p>設定を変更した場合やビルドが失敗した場合は、レシピを修正して再度 <code>prepare</code> し、新しいrunで構築します。この作例には、古いrunからの高速再利用や自動削除の機能はありません。</p>
+<h2>4. ISOを起動する</h2><p>まずVMの起動媒体としてISOを指定するか、Rufusなどで自分のUSBへ書き込みます。書き込むUSBの既存データは消えます。対象・容量と退避済みデータを確認してから実行してください。このリポジトリのスクリプトはUSBの選択や書き込みを行いません。</p>
+<p>Secure Bootの動作は、UEFI/Secure Boot対応のVMまたは実PCで確認します。BIOSのVMで起動できることとは別の結果です。</p>
+<h2>5. デスクトップを使う</h2><ul><li><code>Win+Enter</code>：端末。</li><li>デスクトップの右クリック：Firefox・Wi-Fi・音量・入力設定のメニュー。</li><li><code>Win+Escape</code>：GUI終了。再度起動するにはCUIで <code>start-desktop</code>。</li></ul>
+<p>日本語入力のオン・オフと変換、Firefox、Wi-Fi、音声を対象PCで試します。GUIが出ない場合は <code>~/.cache/ja-live/desktop.log</code> を確認してください。</p>
+<p class="note">RAMセッションのため、Wi-Fi・認証・アプリ設定は再起動で消えます。残す作業ファイルは別の保存媒体へ明示的に保存します。</p>
+<footer>jubako · Debian Liveの構築作例 · 独自コードと文書はMIT</footer></main></body></html>

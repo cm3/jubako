@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>jubako — USB版の使い方</title><link rel="stylesheet" href="style.css"></head><body><main>
+<nav aria-label="説明書"><a href="index.html">構築作例のトップ</a><a href="#start">起動</a><a href="#desktop">普段の操作</a><a href="#storage">保存</a><a href="#recovery">困ったとき</a></nav>
+<h1>jubako — USB版の使い方</h1>
+<p class="lead">AIと書く、持ち運べる日本語Linux。</p>
+<p>Debian Liveをもとに、ブラウザ・端末・Zed・日本語入力を組み合わせたUSBの作業環境です。USBから起動し、プロジェクトと必要な設定を持ち歩いて使います。</p>
+<p class="note">このページは、暗号化保存・Zed・AIに対応したjubako USB版の説明書です。このリポジトリの<a href="getting-started.html">小さな構築作例</a>は、標準ISO・RAM環境から始める別の範囲で、ここに書いた暗号化保存・Zed・AI機能をすべて収録しているわけではありません。完成したUSBイメージの配布は行っていません。</p>
+<h2 id="start">起動する</h2>
+<ol><li>USBを挿し、PCの起動メニューでUSBを選びます。Secure Bootを有効にしたまま使う構成です。機種のGPU・Wi-Fi対応は収録firmwareによります。</li>
+<li>保存領域の案内で <code>u</code> を選び、LUKSパスフレーズを入力します。解錠した設定・Wi-Fiプロファイルを準備してから、labwcデスクトップに入ります。</li>
+<li>保存状態を使わずに試すときは <code>r</code> を選びます。この起動の認証・設定・会話はRAMだけに残り、再起動で消えます。途中で保存先を切り替えず、解錠して使うには再起動します。</li></ol>
+<p>OSは通常ユーザーで自動ログインします。LUKSの解錠後、保存された認証を使えるので、解錠済みのPCを共有する場合は扱いに注意してください。サスペンドは暗号化保存領域を閉じません。</p>
+<h2 id="desktop">普段の操作</h2>
+<div class="scroll"><table><thead><tr><th>操作</th><th>使い方</th></tr></thead><tbody>
+<tr><td>ブラウザ・Zed・端末</td><td>タスクバー左の固定アイコンから開きます。ブラウザを閉じてもデスクトップは動き続けます。</td></tr>
+<tr><td>端末</td><td><code>Win+Enter</code>。Xfce Terminalが開きます。コピーは <code>Ctrl+Shift+C</code>、貼り付けは <code>Ctrl+Shift+V</code>。</td></tr>
+<tr><td>日本語入力</td><td>GUIはfcitx5＋Mozc。変換・無変換キーで切り替えます。設定は <code>jubako-util</code> のJapanese input settings。</td></tr>
+<tr><td>プロジェクト</td><td>ZedのアイコンでREADME付き一覧を開きます。「新規作成」でREADMEを作って開き、「削除」でUSBのゴミ箱へ移します。開いているプロジェクトは削除できません。</td></tr>
+<tr><td>Wi-Fi</td><td>トレイのWi-Fiから接続します。解錠していると接続情報が保存され、次回の起動で自動接続します。明示的な削除は <code>jubako-util</code>。</td></tr>
+<tr><td>音量・明るさ</td><td>Fnキーで変更すると画面に値が出ます。音量はタスクバーのホイールでも変更でき、クリックで消音、右クリックで詳細設定です。</td></tr>
+<tr><td>スクリーンショット</td><td><code>Win+Shift+S</code> で範囲、<code>Win+S</code> で全画面。クリップボードとUSBのScreenshotsへ保存します。</td></tr>
+<tr><td>電源</td><td>右下の電源アイコンで、サスペンド・再起動・終了・自動スリープの時間を選びます。</td></tr>
+<tr><td>ユーティリティー</td><td>端末で <code>jubako-util</code>。メニューは英語で、素のコンソールでも読めます。全コマンドは <code>jubako-commands</code>、または<a href="commands.html">コマンド一覧</a>。</td></tr>
+</tbody></table></div>
+<h2>AIを使う</h2>
+<p>ZedではAgentパネル、端末ではCodex CLIを使えます。認証は利用時に行い、構築レシピや起動イメージへ個人の認証情報を入れません。</p>
+<pre><code>jubako-codex start
+jubako-codex status</code></pre>
+<p><code>start</code> は必要ならログインを案内し、対話モードを開きます。<code>jubako-codex login</code> では、スマートフォンから開く認証ページをQRで表示できます。通信にはWi-Fiなどの接続が必要です。</p>
+<h2 id="storage">何がどこへ保存されるか</h2>
+<div class="scroll"><table><thead><tr><th>場所</th><th>内容</th><th>再起動後</th></tr></thead><tbody>
+<tr><td>FAT32 / JUBAKO_BOOT</td><td>署名済み起動ファイルとOS。OSはbase・apps・customの3層SquashFS。</td><td>残ります。通常のUSB更新で入れ替える領域です。</td></tr>
+<tr><td>LUKS2＋ext4 / JUBAKO_DATA</td><td>Wi-Fi、Codex/ClaudeのCLI認証と会話、Zed設定、Mozc学習など。</td><td>解錠して使った場合は残ります。</td></tr>
+<tr><td>exFAT / JUBAKO_WORK</td><td>プロジェクト、文書、スクリーンショット、診断ログ。Windowsなどから読めます。</td><td>残ります。暗号化されていません。</td></tr>
+<tr><td>RAM</td><td>実行中のOS変更、ブラウザのプロファイルとCookie、一時ログ、セッションkeyring。</td><td>消えます。RAM起動の認証・会話・設定も保存されません。</td></tr>
+</tbody></table></div>
+<p>3つの区画と、OS内部の3層は別の構造です。OS更新はFAT32だけを入れ替え、ext4/exFATのデータを保ちます。使用するUSBは、この構成に合わせて自分で準備したものを使います。</p>
+<p>プロジェクトはexFATの <code>debian-live</code> 以下にあります。暗号化ext4を閉じても、exFATの文書やログは保護されません。保存済みAI認証の削除は <code>jubako-auth-forget</code>。設定・会話は残します。</p>
+<h2 id="recovery">困ったとき</h2>
+<details><summary>GUIが起動しない・コンソールへ戻りたい</summary>
+<p>起動失敗はコンソールへ戻り、終了コードとログの場所を表示します。端末で <code>jubako-commands</code> を読むと、利用できる操作が分かります。</p>
+<p><code>Ctrl+Alt+F1</code>〜<code>F6</code> はLinuxの仮想端末を切り替えます。GUI終了は <code>Win+Escape</code> または <code>jubako-gui-exit</code>。日本語表示コンソール（kmscon）を開いた後は <code>exit</code> または <code>Ctrl+D</code> で実VTへ戻り、<code>jubako-desktop</code> でGUIに入り直せます。</p>
+<p>CUIは日本語表示と英語入力に対応する構成です。日本語変換入力はGUIで使います。</p></details>
+<details><summary>音が出ない</summary><p>音量の詳細設定の「構成」タブで、スピーカー・ヘッドホン・外部画面の出力先を確認します。イヤホンを抜いても検知が残ることがあり、Speakerを含むプロファイルへの切替で戻った事例があります。</p>
+<pre><code>jubako-diag audio silent
+jubako-diag audio working</code></pre><p>無音のときと復旧後を比べて診断を残せます。</p></details>
+<details><summary>診断を持ち帰る</summary><pre><code>jubako-diag save</code></pre><p>必要な権限のためsudoを使い、exFATの <code>debian-live/logs/</code> へ保存します。通常の診断には認証・会話・全環境変数を含めません。過去の試験資料はUSB内の <code>zed-test/docs/</code> から読みます。</p>
+<p>USB-Cのドライバーを再読み込みする <code>jubako-diag usb-c</code> は、必要な場合だけ機器をすべて外して実行してください。</p></details>
+<details><summary>異常時にRAM側のAIデータを残す</summary><p>Zed・Codex・Claudeを閉じ、別の端末で：</p><pre><code>jubako-util ram-backup</code></pre>
+<p>exFATの <code>debian-live/recovery/</code> にtarとチェックサムを保存します。元データは変更せず、自動統合もしません。これは認証・私的な会話を含み得る<strong>暗号化されていない退避</strong>です。公開せずに保管し、必要に応じて個別に復旧します。</p></details>
+<footer>jubako USB版の説明書 · 公開レシピの範囲は<a href="index.html">作例のトップ</a>と<a href="publishing.html">公開と確認範囲</a>へ</footer>
+</main></body></html>

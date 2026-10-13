@@ -1,9 +1,11 @@
 <!doctype html>
-<html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>jubako — 自分の日本語Debian Liveを作る</title><link rel="stylesheet" href="style.css"></head><body><main><nav aria-label="ガイド"><a href="index.html">概要</a><a href="getting-started.html">最初の構築</a><a href="customize.html">変更する</a><a href="architecture.html">仕組み</a><a href="publishing.html">公開と確認範囲</a></nav><h1>jubako — 自分の日本語Debian Liveを作る</h1><p class="lead">必要なアプリと設定を選び、USBから起動する自分の作業環境へ。</p>
-<p>このrepoはDebianのlive-buildを使う小さな作例です。labwc、Firefox、端末、fcitx5/Mozcを組み合わせ、GUIの日本語表示・入力を最初の目標にします。完成したOSの配布ではなく、レシピを読んで変更するための出発点です。</p>
-<p class="note"><strong>初回ドラフト。</strong>この切り出した例のフルビルドと起動はまだ未確認です。元の個人用jubakoでの成功と区別しています。</p>
-<div class="grid"><div class="card"><h3>まず動く作例へ</h3><p>標準の単一ISOを作ります。3区画や暗号化を最初から必須にせず、問題を切り分けやすくします。</p></div><div class="card"><h3>どこを変えるか分かる</h3><p>アプリ一覧、起動設定、キー、メニューはそれぞれ小さなファイル。巨大な設定基盤を覚える必要はありません。</p></div><div class="card"><h3>自分で構築する</h3><p>個人の設定・認証を配布物へ混ぜず、Debianから必要なパッケージを取得して組み立てます。</p></div></div>
-<h2>最初に読む順番</h2><ol><li><a href="getting-started.html">構築ツールを入れ、ISOを作る。</a></li><li><a href="customize.html">レシピの変更点を把握する。</a></li><li><a href="architecture.html">LiveとRAM、GUI、署名起動を理解する。</a></li><li><a href="publishing.html">検証範囲と公開時の確認事項を読む。</a></li></ol>
-<h2>Debianから始める理由</h2><p>必要な部品を少しずつ足す構築には、live-buildの標準レシピとDebianパッケージの組合せが扱いやすいためです。Ubuntu/Xubuntuでも類似の環境は作れます。Xubuntuの完成したデスクトップを少し変える用途とは、出発点が違います。</p>
-<p>最初はDebian 13・amd64だけを対象とし、Intel向けfirmwareを例示します。ARM、すべてのGPU/Wi-Fi、複数の構築ホストを一度に保証する方針ではありません。</p>
-<h2>これからの候補</h2><p>個人状態と作業ファイルを分ける3区画、LUKS保存、OSの3層と高速更新、ZedやAIを使うプロフィールは、最初の例が独立して動いた後に追加する候補です。現在収録している機能として案内しません。</p><footer>jubako · Debian Liveの作例 · 初回コミットdraft · 独自ソースはMIT</footer></main></body></html>
+<html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>jubako — 自分の日本語Live USBを作る</title><link rel="stylesheet" href="style.css"></head><body><main><nav aria-label="ガイド"><a href="index.html">作例の概要</a><a href="getting-started.html">構築する</a><a href="customize.html">変更する</a><a href="architecture.html">仕組み</a><a href="publishing.html">検証と共有</a><a href="usage.html">USB版の使い方</a></nav><h1>jubako — 自分の日本語Live USBを作る</h1>
+<p class="lead">Debianのパッケージから、必要なアプリと設定を選んで作る。</p>
+<p>このリポジトリは、Debian 13のlive-buildで日本語GUI付きのLive ISOを構築する作例です。Linuxの基本操作ができ、自分のUSBで使う環境を作りたい人向けに、編集箇所と構築手順をまとめています。</p>
+<div class="grid"><div class="card"><h3>小さなデスクトップ</h3><p>labwc、Firefox ESR、Xfce Terminalを組み合わせます。日本語入力はfcitx5＋Mozc、キーボードはJIS配列です。</p></div><div class="card"><h3>見通せるレシピ</h3><p>パッケージ一覧、キー、メニュー、起動処理はそれぞれ独立したファイルです。変更をレシピに残して再構築できます。</p></div><div class="card"><h3>標準ISOから始める</h3><p>署名済みの起動経路とRAMセッションを使います。最初は永続保存を追加せず、アプリと機器の動作を確認します。</p></div></div>
+<h2>作れるもの</h2><p>amd64用のLive ISOです。UEFI/Secure Bootを有効にした構成で、VMまたは自分で用意したUSBから起動します。Wi-Fiと音量の設定画面、日本語フォントと入力方式を収録します。</p>
+<p>この作例はRAMで動き、再起動後にアプリ設定やWi-Fiを残しません。保存する作業は別媒体へ書き出します。3区画の暗号化USB、Zed、AI機能を備えたjubakoの使い方は<a href="usage.html">USB版の説明書</a>にありますが、このリポジトリのレシピとは収録範囲が異なります。</p>
+<h2>始める</h2><ol><li><a href="getting-started.html">構築ホストを準備してISOを作る。</a></li><li><a href="customize.html">使うアプリ・firmware・キーを変更する。</a></li><li><a href="architecture.html">起動とRAMセッションの仕組みを理解する。</a></li><li><a href="publishing.html">実機で検証し、自分の変更を共有する。</a></li></ol>
+<p class="note">検証済みの範囲はソース検査、Debian依存解決のシミュレーション、構築設定の生成です。この公開レシピのISOビルドと起動は未確認です。対象機器で確認する項目は<a href="publishing.html">検証と共有</a>にまとめています。</p>
+<h2>Debianを使う理由</h2><p>live-buildの標準構成を使い、Debianパッケージを必要な順に追加できるためです。完成したデスクトップ環境を改造するより、部品を選んで構成を把握したい場合に適した出発点です。</p>
+<footer>jubako · Debian Liveの構築作例 · 独自コードと文書はMIT</footer></main></body></html>

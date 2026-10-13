@@ -4,17 +4,17 @@ Debian 13のlive-buildから、labwc・Firefox・Xfce Terminal・fcitx5/Mozcを
 組み合わせた日本語Live ISOを作るレシピです。自分のアプリや設定へ変更し、
 自分のUSBで試すための出発点を目指しています。
 
-**初回コミットのドラフトです。** ソース・依存検査と`lb config`による準備を行っていますが、
-この切り出した作例のISOビルド・VM起動・実機起動はまだ未確認です。
-元の個人用jubakoでの実機成功を、この作例の成功として扱っていません。
+ソース・依存検査と`lb config`による設定生成を確認しています。
+このレシピのISOビルド・VM起動・実機起動はまだ未確認です。
+対象PCでの確認項目は [検証と共有](docs/publishing.html) にまとめています。
 
-詳しいガイドは [docs/index.html](docs/index.html) から読めます。
+詳しい構築ガイドは [docs/index.html](docs/index.html) から読めます。
+[USB版の利用者向け説明書](docs/usage.html)も用意していますが、公開作例とUSB版の収録範囲は区別しています。
 GitHub Pagesを`main`ブランチの`/docs`に設定すると、そのまま公開できます。
 
 ## 最初の構築
 
 構築ホストは **Debian 13・amd64**。WSL2のDebianも想定しています。
-Ubuntuを構築ホストとして動作確認した、という意味ではありません。
 
 ```bash
 # ホストへの構築ツール導入。Live内へのインストールではありません。
@@ -67,9 +67,8 @@ firmware一覧はIntel PC向けの例です。他の機種は必要なパッケ�
 
 ## 範囲
 
-最初は単一のISOとRAMセッションだけを作ります。個人用のWindows運用、固定Lexar容量、
-CF-SR用module/MOK鍵、AIバイナリや認証、旧データ移行は持ち込んでいません。
-3区画・LUKS保存・3層高速更新・Zed/AIは、今後独立した例として追加する候補です。
+このレシピは単一ISOとRAMセッションを構築します。3区画・LUKS保存・3層更新・
+Zed/AIの導入や、機種固有のモジュール管理は含みません。必要な機能はレシピを拡張して追加します。
 
 自動ログインと通常userのsudo利用を含む、個人のLive作業向けの作例です。
 共有端末向けのアクセス制御や全機種での動作を保証するものではありません。
@@ -81,9 +80,9 @@ Secure Bootでの実起動は別途確認が必要です。
 [THIRD_PARTY.md](THIRD_PARTY.md) を参照してください。ISOやアプリのバイナリをrepoへ含めません。
 
 GitHub Actionsはソース検査だけを行います。ISOの自動構築・公開はしません。
-Pagesの設定手順と公開前チェックは [docs/publishing.html](docs/publishing.html) にあります。
+変更を共有するときの検査とPagesの設定は [docs/publishing.html](docs/publishing.html) にあります。
 
-初回コミット前の索引検査：
+自分の変更を共有する前の検査：
 
 ```bash
 git add README.md LICENSE THIRD_PARTY.md .gitignore .github docs recipe scripts
