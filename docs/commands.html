@@ -5,8 +5,9 @@
 <h1>コマンド一覧</h1><p class="note">この一覧はjubako USB版の説明です。公開リポジトリの小さな構築作例とは収録範囲が異なります。</p>
 <p>jubako に入っている自前のコマンドです。端末で名前を打って使います。端末では <code>jubako-commands</code> で同じ一覧（英語）を、<code>jubako-util</code> でよく使う操作のメニューを出せます。<code>sudo</code> と書いたものは管理者の権限を使います（保存領域の解錠ではLUKSパスフレーズを入力します）。</p>
 
+<p>LocalSendはGUIの右クリックメニューから、または端末の <code>localsend_app</code> で起動できます。ローカル説明書は <code>file:///usr/share/jubako/docs/usage.html</code> です。</p>
 <h2>普段使うもの</h2><table><thead><tr><th>コマンド</th><th>できること</th></tr></thead><tbody>
-<tr><td><code>jubako-util</code></td><td>よく使う操作のメニュー。日本語入力の設定、スクロール方向、保存済み Wi-Fi の削除、AI の認証の削除、非常用の書き出し、コマンド一覧。GUI の外（コンソール）では、Wi-Fi の設定や日本語のコンソールなど、コンソール用の項目になる。</td></tr>
+<tr><td><code>jubako-util</code></td><td>よく使う操作のメニュー。日本語入力の設定、スクロール方向、保存済み Wi-Fi の削除、AI の認証の削除、非常用の書き出し、コマンド一覧。GUI の外（コンソール）では、Wi-Fi の設定や文字サイズ変更など、コンソール用の項目になる。</td></tr>
 <tr><td><code>jubako-commands</code></td><td>コマンドの一覧を端末に出す（英語。素のコンソールでも読めるように）。</td></tr>
 <tr><td><code>jubako-zed</code></td><td>Zed でプロジェクトを開く。README の冒頭を見ながら選べる画面が出る。新規作成・削除もここから。開いているプロジェクトは重ねて開かず、前面に出す。左のタスクバーの Zed アイコンと同じ。</td></tr>
 <tr><td><code>jubako-terminal</code></td><td>端末を開く（Win+Enter と同じ）。</td></tr>
@@ -14,17 +15,28 @@
 <tr><td><code>jubako-screenshot region|full</code></td><td>スクリーンショット。範囲（Win+Shift+S）か全画面（Win+S）。クリップボードに入り、exFAT の <code>Screenshots</code> にも保存される。</td></tr>
 <tr><td><code>jubako-scroll</code></td><td>タッチパッドのスクロール方向を切り替える。</td></tr>
 <tr><td><code>jubako-ime-settings</code></td><td>Mozc（日本語変換）の設定画面。辞書、予測候補、キー設定。</td></tr>
-<tr><td><code>jubako-codex start|login|qr|status|run</code></td><td>端末で Codex を使うための補助。<code>qr</code> はログイン用の URL を QR コードで表示する（スマートフォンでログインするとき）。</td></tr>
+<tr><td><code>jubako-codex start|login|qr|status|run|network</code></td><td>端末版Codexの補助。保存先未準備なら実VTでu/rをやり直せる。qrは認証ページのURLを表示し、networkは認証情報を使わずHTTPSを確認する。qr/networkは保存先未準備でも使える。</td></tr>
 <tr><td><code>jubako-wifi-storage save|restore|forget</code></td><td>Wi-Fi の接続情報を ext4 に保存・復元・削除する。接続すると自動で保存されるので、普段は削除のときだけ使う。</td></tr>
 <tr><td><code>jubako-auth-forget</code></td><td>保存してある Codex・Claude の認証情報を削除する（設定と会話の履歴は残る）。</td></tr>
 <tr><td><code>jubako-ram-backup</code></td><td>ext4 が使えず RAM に保存されていたエージェントのデータを、非常用に exFAT の <code>debian-live/recovery/</code> へtarで書き出す。認証情報を含み得る暗号化されていないファイルなので、非公開で保管する。</td></tr>
+<tr><td><code>jubako-history export ext4|exfat</code></td><td>会話JSONLだけを分析用に書き出し・照合する。ext4はlive-user/conversation-exports、exFATはdebian-live/conversations以下。認証・設定・DBは含めない。切替前のRAM記録には <code>--source ram</code>。</td></tr>
+<tr><td><code>jubako-history connect-ext4</code></td><td>GUIとエージェントを閉じて実VTで実行。RAM会話をext4へ書き出す／exFATへ書き出す／RAMに残す、を選び、次回Codex起動からext4を使う。元のRAM状態は再起動まで保持する。</td></tr>
 </tbody></table>
+
+<h2>別のUSBへ複製する</h2>
+<p><code>jubako-util</code> の「Copy this USB」から対象USBとext4の0/1を選べます。RAMモードで起動してGUIを終了し、コンソールのメニューから実行します。直接開くには <code>jubako-util clone</code>。</p>
+<p><code>sudo jubako-clone /dev/disk/by-id/対象USB --ext4 0</code> は計画表示のみです。<code>--ext4 0</code> は空の暗号化ext4、<code>--ext4 1</code> は設定・認証・会話を含む保存済みext4をコピーします。FAT32とexFATのファイルはどちらでもコピーし、exFATだけ複製先の残り容量へ広げます。</p>
+<p>書き込みはRAMモードで起動し、GUIと作業アプリを終了してコンソールから実行します。元のexFATは <code>sudo jubako-exfat unmount</code> で外しておきます。計画を確認した後、同じコマンドに <code>--write</code> を追加すると対象USBの全内容を消去する確認が出ます。sudoは区画作成・暗号化・マウント用です。パスフレーズはcryptsetupへ直接入力します。今のRAMの作業内容はコピー対象に含みません。複製先の起動・保存はまだ実機未確認です。</p>
+
+<h2>uとrの保存領域</h2>
+<p><code>u</code> は暗号化ext4に保存済みの設定・認証・履歴を使います。<code>r</code> は初期構造だけを持つ空のRAM保存領域を作り、同じアプリ用フォルダーを使います。初期構造と既定設定はFAT32上のOSイメージに収録しています。元のext4は開きません。RAM内のログイン・履歴・設定は今回の起動中だけ有効で、終了時に失われます。RAM状態のファイルシステム上限は物理RAMの25%で、必要な分だけメモリを使います。</p>
+<p>OS本体をRAMへ全コピーする機能ではないため、rでも起動USBは抜けません。作業ファイルと診断ログは引き続きexFATに保存します。必要なRAM状態は <code>jubako-util ram-backup</code> で手動退避できます。新しい共通RAM領域は <code>ram-store.tar</code>、例外的にホームに残ったエージェント状態は <code>ram-agents.tar</code> になります。共通領域の退避はlive-user以下が対象で、root専用のWi-Fi/入力保存領域は含めません。どちらも認証を含み得る暗号化されていない退避です。</p>
 
 <h2>デスクトップとコンソール</h2><table><thead><tr><th>コマンド</th><th>できること</th></tr></thead><tbody>
 <tr><td><code>jubako-browser</code></td><td>GUI（labwc と Firefox）を始める。普段は起動時に自動で動く。</td></tr>
-<tr><td><code>jubako-desktop</code></td><td>Linux のコンソールから GUI を始める。</td></tr>
-<tr><td><code>jubako-gui-exit</code></td><td>GUI を終える（Win+Escape、右クリックのメニューと同じ）。終わると自動で日本語のコンソール（<code>jubako-console</code>）が開く。</td></tr>
-<tr><td><code>sudo jubako-console</code></td><td>日本語を表示できるコンソール（kmscon、tty8）。Ctrl+D で元に戻る。日本語の入力はできない。</td></tr>
+<tr><td><code>jubako-desktop --gui</code></td><td>元のLinux実VTからGUIを明示起動する。console only起動後も使える。</td></tr>
+<tr><td><code>jubako-gui-exit</code></td><td>GUI を終える（Win+Escape、右クリックのメニューと同じ）。元の通常Linuxコンソールへ戻る。</td></tr>
+<tr><td><code>big [16|24|28|32]</code></td><td>現在の実VTのフォントサイズを変更する。既定はTerminus Bold 24px。sudoはフォント設定用。GUI端末内では使わない。</td></tr>
 <tr><td><code>sudo jubako-wifi</code></td><td>コンソールで Wi-Fi に接続・管理する。</td></tr>
 </tbody></table>
 
@@ -35,6 +47,7 @@
 
 <h2>診断</h2><table><thead><tr><th>コマンド</th><th>できること</th></tr></thead><tbody>
 <tr><td><code>jubako-diag save</code></td><td>カーネル・システムログ・音声・USB-C などの診断を exFAT の <code>logs</code> に保存する（sudo を使う）。困ったときに、Windows から読める形で持ち帰る。</td></tr>
+<tr><td><code>jubako-util diag io [check|before|failed|working|after]</code></td><td>Codex・USB読み取り障害用。端末サイズ、本体起動、固定配布物とのハッシュ比較、OSイメージ読み取り、マウント、USB省電力状態、障害に絞ったカーネルログを採取。まずRAMへ保存し、exFATのdebian-live/logsへ照合付きで書き出す。sudoはカーネル閲覧とログ保存用マウントに使用。認証・会話を採取せず、修復やドライバー変更もしない。USB保存に失敗した場合は表示されたRAM内フォルダーに記録が残るが、再起動すると消える。</td></tr>
 <tr><td><code>jubako-diag audio [before|silent|working|after]</code></td><td>音声の診断を保存する。音が出ないときは <code>silent</code>、直った後は <code>working</code> を付けると比べやすい。</td></tr>
 <tr><td><code>jubako-diag usb-c</code></td><td>USB-C の電源管理のドライバーを読み込み直してから、診断を保存する。先に USB-C の機器をすべて外す。</td></tr>
 </tbody></table>
