@@ -1,11 +1,12 @@
 <!doctype html>
 <html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>jubako — USB版の使い方</title><link rel="stylesheet" href="style.css"></head><body><main>
-<nav aria-label="説明書"><a href="index.html">構築作例のトップ</a><a href="#start">起動</a><a href="#desktop">普段の操作</a><a href="#storage">保存</a><a href="#recovery">困ったとき</a></nav>
+<nav aria-label="説明書"><a href="index.html">構築作例のトップ</a><a href="#start">起動</a><a href="#desktop">普段の操作</a><a href="#storage">保存</a><a href="#recovery">困ったとき</a><a href="status.html">現在の状況</a></nav>
 <h1>jubako — USB版の使い方</h1>
 <p class="lead">AIと書く、持ち運べる日本語Linux。</p>
 <p>Debian Liveをもとに、ブラウザ・端末・Zed・日本語入力を組み合わせたUSBの作業環境です。USBから起動し、プロジェクトと必要な設定を持ち歩いて使います。</p>
 <p class="note">このページは、暗号化保存・Zed・AIに対応したjubako USB版の説明書です。このリポジトリの<a href="getting-started.html">小さな構築作例</a>は、標準ISO・RAM環境から始める別の範囲で、ここに書いた暗号化保存・Zed・AI機能をすべて収録しているわけではありません。完成したUSBイメージの配布は行っていません。</p>
-<p class="note">更新：2026-10-30。実機で確認した範囲と、次回イメージ向けの変更を分けて記載しています。</p>
+<p class="note">更新：2026-11-07。実機で確認した範囲と、次回イメージ向けの変更を分けて記載しています。</p>
+<p>いま使っているUSBと次回イメージの違いは<a href="status.html">現在の確認状況・採用版</a>を参照してください。次回向けの機能は、古いUSBへ自動では追加されません。</p>
 <h2 id="start">起動する</h2>
 <ol><li>USBを挿し、PCの起動メニューでUSBを選びます。Secure Bootを有効にしたまま使う構成です。機種のGPU・Wi-Fi対応は収録firmwareによります。</li>
 <li>保存領域の案内で <code>u</code> を選び、LUKSパスフレーズを入力します。解錠した設定・Wi-Fiプロファイルを準備してから、labwcデスクトップに入ります。</li>
@@ -16,7 +17,7 @@
 <tr><td>ブラウザ・Zed・端末</td><td>タスクバー左の固定アイコンから開きます。ブラウザを閉じてもデスクトップは動き続けます。</td></tr>
 <tr><td>端末</td><td><code>Win+Enter</code>。Xfce Terminalが開きます。コピーは <code>Ctrl+Shift+C</code>、貼り付けは <code>Ctrl+Shift+V</code>。</td></tr>
 <tr><td>日本語入力</td><td>GUIはfcitx5＋Mozc。変換・無変換キーで切り替えます。設定は <code>jubako-util</code> のJapanese input settings。</td></tr>
-<tr><td>プロジェクト</td><td>ZedのアイコンでREADME付き一覧を開きます。「新規作成」でREADMEを作って開き、「削除」でUSBのゴミ箱へ移します。開いているプロジェクトは削除できません。</td></tr>
+<tr><td>プロジェクト</td><td>既にZedが動いていれば同じウィンドウへ渡します。ZedのアイコンでREADME付き一覧を開きます。「新規作成」でREADMEを作って開き、「削除」でUSBのゴミ箱へ移します。開いているプロジェクトは削除できません。</td></tr>
 <tr><td>Wi-Fi</td><td>トレイのWi-Fiから接続します。解錠していると接続情報が保存され、次回の起動で自動接続します。明示的な削除は <code>jubako-util</code>。</td></tr>
 <tr><td>音量・明るさ</td><td>Fnキーで変更すると画面に値が出ます。音量はタスクバーのホイールでも変更でき、クリックで消音、右クリックで詳細設定です。</td></tr>
 <tr><td>スクリーンショット</td><td><code>Win+Shift+S</code> で範囲、<code>Win+S</code> で全画面。クリップボードとUSBのScreenshotsへ保存します。</td></tr>
@@ -24,14 +25,28 @@
 <tr><td>ユーティリティー</td><td>端末で <code>jubako-util</code>。メニューは英語で、素のコンソールでも読めます。全コマンドは <code>jubako-commands</code>、または<a href="commands.html">コマンド一覧</a>。</td></tr>
 </tbody></table></div>
 <h2>LocalSendでファイルを送受信する</h2>
-<p class="note">次回イメージ向けに組込み済みです。新イメージでの実機起動・送受信は未確認です。</p>
-<p>デスクトップの右クリックメニューから「LocalSend（ファイル送受信）」を開きます。相手の端末でもLocalSendを開き、同じネットワークへ接続してください。受信ファイルを再起動後も残す場合は、LocalSendの保存先をUSBのexFAT上の作業フォルダーに指定します。RAM上の保存先は再起動で消えます。相手が見つからない場合は、Wi-Fiの端末間通信制限とTCP/UDPポート53317を確認してください。</p>
+<p>次回イメージではGUIを外し、公式CLIとエージェントの <code>localsend</code> スキルを使います。送受信したいときだけエージェントへ依頼してください。完了・中止後はCLIを終了し、常駐受信はしません。停止中は相手から送信できません。</p>
+<pre><code>jubako-localsend status
+jubako-localsend receive
+jubako-localsend send /absolute/path/report.pdf
+jubako-localsend list --limit 20
+jubako-localsend import 'received.pdf' --into /absolute/project</code></pre>
+<p>端末名は <code>jubako</code>、ポートは53317、共通受信箱はexFATの <code>debian-live/LocalSend/</code>。exFATが使えない場合はRAMへ黙って受信せず、接続を案内します。importは照合付きコピーで元を残し、上書きしません。CLIの送受信には対話端末が必要です。受信のYは今回の承認、Nは拒否、Pはペアリング付き承認です。不要な常設ペアリングはしません。PIN必須の相手への送信はCLI1.18.2で未対応です。</p>
+<h2 id="time">時計と日本語入力</h2>
+<p>初期タイムゾーンはAsia/Tokyo。ネット接続後にsystemd-timesyncdが時刻を同期し、オフラインの起動は同期を待ちません。状態は <code>jubako-time status</code> で確認できます。時計や同期状態の保存はRAM上で、受信箱や暗号化保存領域へ定期書込みしません。</p>
+<p>RTCのUTC／現地時刻の扱いと表示タイムゾーンは別設定です。既定はUTC。RTCが現地時刻のPCでは起動引数に <code>jubako.rtc=local</code>、UTCなら <code>jubako.rtc=utc</code> を指定できます。オフラインで選び直すには <code>sudo jubako-time rtc local</code> または <code>sudo jubako-time rtc utc</code>。これはRTCを読みシステム時計へ設定する操作で、RTCを書き換えません。同期後の時計をRTCの値で戻さないため、同期済みなら次回起動での選択を案内します。</p>
+<p>持ち運ぶUSBとしてRTCへの自動書戻しを抑えます。正しい時刻を確認して意図的に保存する場合は、RTCの方式に合わせた標準操作を使えます。たとえば現地時刻RTCなら <code>sudo hwclock --systohc --localtime</code>。sudoはPC本体のRTC書込み用です。タイムゾーンとシステム時計を確認せず実行しないでください。</p>
+<p>GUI利用中に時計が大きく巻き戻った場合は、Mozcの復旧を案内します。未確定入力を確定・取消して承認すると、自分のMozcサーバーだけを再起動します。学習データは削除せず、承認なしの強制再起動もしません。上流修正版Mozcへの更新ではなく、今回の版に対する復旧補助です。</p>
+<h2>ファイルやフォルダーを開く</h2>
+<p>次回イメージでは、Zedの「Open in Default App」「Reveal in File Manager」から、Firefoxで扱えるファイルやフォルダーを開く補助を収録します。フォルダーはFirefoxの一覧表示で、特定ファイルの選択・強調はしません。画像・PDF・HTML・テキスト等を対象とし、Markdownは元のテキスト表示です。音声・動画はコーデックに依存します。</p>
+<p>対応アプリがある別形式はその既定を使い、アプリが無い場合は日本語の案内とパスコピーを表示します。Office文書等の変換機能や独自の常駐ファイラーを追加する変更ではありません。Zedのメニュー直接操作は新イメージで確認が必要です。</p>
 <h2 id="offline">ネットがつながらないとき</h2>
 <p>次回イメージから、ブラウザの開始ページは収録済みのローカル説明書になります。r（RAM）モードでも、Wi-Fi未接続でも、exFATや暗号化ext4を開けない場合でも読めます。構築ガイドを含むこのサイト全体を同梱し、ページ間のリンクとCSSもローカルで開きます。外部サイトへのリンクやAI認証にはネット接続が必要です。</p>
 <pre><code>file:///usr/share/jubako/docs/usage.html</code></pre>
 <p>Firefoxのアドレス欄へ上のURLを入力すると直接開けます。収録版はイメージ作成時点の内容です。接続できるときは <a href="https://cm3.github.io/jubako/usage.html">オンラインの最新説明書</a> も参照できます。再ビルド前のUSBには今回の全文同梱はありません。</p>
-<h2 id="status">現在の確認状況</h2>
-<ul><li>利用者が実機で確認：rモードの起動、タスクバーでの最小化、Xfce Terminalの説明、起動メニューの2択。</li><li>次回イメージへ反映する構築ソース：GUI倍率1.3、通常consoleの24px、kmscon廃止、会話JSONL書出しとRAMからext4への選択切替。</li><li>今回の再構築対象：file、LocalSend 1.18.2、Zed 1.26.2、Firefox ESRのDebianセキュリティ更新、サイトのローカル同梱。構文・依存・限定したstub試験まで確認し、新イメージのGUI・アプリ・送受信は未確認です。</li></ul>
+<h2 id="status">確認状況とカーネル更新</h2>
+<p>実機での確認済み項目と次回採用版は<a href="status.html">現在の状況</a>にまとめています。カーネル更新時は、対応するファン用モジュールを構築元が同じ鍵で再構築・署名します。</p>
+<p>以前その鍵をMOKへ登録済みなら、通常は再登録不要です。更新後は <code>uname -r</code>、<code>systemctl status jubako-fan.service --no-pager</code>、<code>sudo jubako-fan status</code> を確認してください。sudoはACPI状態の読み取り用です。静音制御は確認済みのCF-SR4機種に限ります。鍵を変更した場合・別PCでは、公開証明書を確認してから登録を案内します。</p>
 <h2>AIを使う</h2>
 <p>ZedではAgentパネル、端末ではCodex CLIを使えます。認証は利用時に行い、構築レシピや起動イメージへ個人の認証情報を入れません。</p>
 <pre><code>jubako-codex start
