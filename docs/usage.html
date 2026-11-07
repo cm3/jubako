@@ -44,6 +44,7 @@ jubako-localsend import 'received.pdf' --into /absolute/project</code></pre>
 <p>次回イメージから、ブラウザの開始ページは収録済みのローカル説明書になります。r（RAM）モードでも、Wi-Fi未接続でも、exFATや暗号化ext4を開けない場合でも読めます。構築ガイドを含むこのサイト全体を同梱し、ページ間のリンクとCSSもローカルで開きます。外部サイトへのリンクやAI認証にはネット接続が必要です。</p>
 <pre><code>file:///usr/share/jubako/docs/usage.html</code></pre>
 <p>Firefoxのアドレス欄へ上のURLを入力すると直接開けます。収録版はイメージ作成時点の内容です。接続できるときは <a href="https://cm3.github.io/jubako/usage.html">オンラインの最新説明書</a> も参照できます。再ビルド前のUSBには今回の全文同梱はありません。</p>
+<p>Windowsから読む説明書も、次回USB更新からFAT32領域（JUBAKO_BOOT）の <code>docs/usage.html</code> に同梱します。OSと一緒に更新し、exFATの作業データを消しても説明書は残ります。</p>
 <h2 id="status">確認状況とカーネル更新</h2>
 <p>実機での確認済み項目と次回採用版は<a href="status.html">現在の状況</a>にまとめています。カーネル更新時は、対応するファン用モジュールを構築元が同じ鍵で再構築・署名します。</p>
 <p>以前その鍵をMOKへ登録済みなら、通常は再登録不要です。更新後は <code>uname -r</code>、<code>systemctl status jubako-fan.service --no-pager</code>、<code>sudo jubako-fan status</code> を確認してください。sudoはACPI状態の読み取り用です。静音制御は確認済みのCF-SR4機種に限ります。鍵を変更した場合・別PCでは、公開証明書を確認してから登録を案内します。</p>
@@ -60,7 +61,7 @@ jubako-codex login</code></pre>
 <p>sudoはWi-Fi設定の変更に使います。networkは認証情報を送らず、公開HTTPSの到達性とDNS/接続/TLS/タイムアウトの失敗を確認します。HTTPSが通っても認証APIの成功を保証しません。TLSの検証は無効にしません。すでに認証済みの通常起動には、この追加確認を要求しません。</p>
 <h2 id="storage">何がどこへ保存されるか</h2>
 <div class="scroll"><table><thead><tr><th>場所</th><th>内容</th><th>再起動後</th></tr></thead><tbody>
-<tr><td>FAT32 / JUBAKO_BOOT</td><td>署名済み起動ファイルとOS。OSはbase・apps・customの3層SquashFS。</td><td>残ります。通常のUSB更新で入れ替える領域です。</td></tr>
+<tr><td>FAT32 / JUBAKO_BOOT</td><td>署名済み起動ファイル、OS、オフライン説明書（docs/）。OSはbase・apps・customの3層SquashFS。</td><td>残ります。通常のUSB更新で入れ替える領域です。</td></tr>
 <tr><td>LUKS2＋ext4 / JUBAKO_DATA</td><td>Wi-Fi、Codex/ClaudeのCLI認証と会話、Zed設定、Mozc学習など。</td><td>解錠して使った場合は残ります。</td></tr>
 <tr><td>exFAT / JUBAKO_WORK</td><td>プロジェクト、文書、スクリーンショット、診断ログ。Windowsなどから読めます。</td><td>残ります。暗号化されていません。</td></tr>
 <tr><td>RAM</td><td>実行中のOS変更、ブラウザのプロファイルとCookie、一時ログ、セッションkeyring。</td><td>消えます。RAM起動の認証・会話・設定も保存されません。</td></tr>

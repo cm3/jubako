@@ -28,7 +28,8 @@
 <h2>カーネルと更新方針</h2>
 <p>カーネルは採用する版を明示して構築します。固定は安全性の保証ではなく、後続のセキュリティ更新も自動では入りません。今回6.12.115-2へ変更したのは、<a href="https://lists.debian.org/debian-security-announce/2026/msg00521.html">Debianの11月2日のセキュリティ更新</a>を取り込むためです。更新のたびに対応モジュールを作り、版・ハッシュ・署名を確認します。特定機種のファン制御を他機種へ適用しません。</p>
 <h2>説明書の公開版とUSB内の控え</h2>
-<p>ブラウザの開始ページはイメージ内の <code>file:///usr/share/jubako/docs/usage.html</code>。ネット未接続でも使えますが、OSに収録された説明書はUSBを更新するまで変わりません。説明書だけをexFATへ持ち帰った場合は <code>file:///run/jubako/exfat/debian-live/docs/usage.html</code> を開いてください。WindowsからはUSB内 <code>debian-live/docs/usage.html</code> を開けます。</p>
+<p>次回イメージでは、説明書をOSと同じFAT32領域（JUBAKO_BOOT）の <code>docs/</code> に収録し、USB更新時に一緒に更新します。Windowsではその領域の <code>docs/usage.html</code> を開けます。exFATは自由な作業領域で、説明書の保存先には使いません。</p>
+<p>Live起動後の開始ページは、同じ内容をイメージ内に収録した <code>file:///usr/share/jubako/docs/usage.html</code> です。RAMモード・ネット未接続・exFAT未接続でも読めます。FAT32を書込み可能にマウントする必要はありません。この配置変更は次回の構築とUSB更新から適用します。</p>
 <p>オンラインの更新がUSBへ自動同期される仕組みはありません。収録・配信時点はこのページの日付と採用版で確認します。今後の版変更時は説明書との一致を構築準備時に検査します。</p>
 <footer><a href="usage.html">USB版の使い方へ</a> · <a href="https://cm3.github.io/jubako/status.html">オンラインの確認状況</a></footer>
 </main></body></html>
