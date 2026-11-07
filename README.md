@@ -10,6 +10,8 @@ Debian 13のlive-buildから、labwc・Firefox・Xfce Terminal・fcitx5/Mozcを
 
 **USB版の現在の使い方・採用版・確認結果は [USB版の現状](docs/status.html) と [利用ガイド](docs/usage.html) を参照してください（2026-11-07更新）。** LocalSend CLI化、ファイル起動、時計、カーネルとファン署名の更新方針を記載しています。この公開作例のレシピへUSB版の全機能を追加したという意味ではありません。
 
+機種依存の実例は [機種別Tips](docs/hardware-tips.html) に記録しています。現在はLet's note CF-SR4のファン制御・署名とMOK・復元方法を掲載しています。
+
 詳しい構築ガイドは [docs/index.html](docs/index.html) から読めます。
 [USB版の利用者向け説明書](docs/usage.html)も用意していますが、公開作例とUSB版の収録範囲は区別しています。
 GitHub Pagesを`main`ブランチの`/docs`に設定すると、そのまま公開できます。
